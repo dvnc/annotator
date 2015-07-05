@@ -1,0 +1,209 @@
+::selection {
+    background: $selection;
+}
+
+.annotation {
+    background: rgba(255, 255, 0, 0.05);
+
+    &.shown {
+        cursor: pointer;
+    }
+}
+
+// Color definitions
+.annotation, #annotation-editor .colors .color {
+    &.yellow {
+        background: $yellow;
+    }
+
+    &.green {
+        background: $green;
+    }
+
+    &.pink {
+        background: $pink;
+    }
+
+    &.blue {
+        background: $blue;
+    }
+}
+
+.temporary {
+    background: $selection;
+}
+
+#annotation-editor {  
+    margin-top: 50px;
+    position: relative;
+    font-family: "Helvetica Neue", Helvetica, sans-serif;
+    display: none;
+    position: absolute;
+    box-shadow: 0 3px 35px rgba(0, 0, 0, 0.21);
+    &:after {
+        content: '';
+        position: absolute;
+        left: 80px;
+        top: -9px;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 0 10px 10px 10px;
+        border-color: transparent transparent $annotator-bg transparent;
+    }
+    &:before {
+        content: '';
+        position: absolute;
+        left: 80px;
+        top: -10px;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 0 10px 10px 10px;
+        border-color: transparent transparent $annotator-dark-border transparent;
+    }
+
+    div.awesomplete > ul > li {
+        position: relative;
+        padding: .2em .5em;
+        cursor: pointer;
+    }
+
+    .dropdown-list {
+        background: $annotator-bg;
+        display: inline-block;
+        width: 180px;
+        border-radius: 3px;
+        border: 1px solid $annotator-dark-border;
+        box-shadow: 0 1px 2px $annotator-shadow, 0 3px 15px rgba(0,0,0,0.15);
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        z-index: 10;
+
+        li {
+            border-bottom: 1px solid $annotator-light-border;
+            position: relative;
+            padding: 0px 10px;
+
+            &.js-remove-annotation-wrapper {
+                display: none;
+            }
+
+
+            a, span.link {
+                padding: 5px 0;
+                text-decoration: none;
+                display: block;
+                font-size: 12px;
+                color: $annotator-text-color;
+                line-height: 20px;
+                font-weight: 400;
+                text-transform: uppercase;
+                cursor: pointer;
+
+            }
+
+
+            &:hover {
+                background-color: $annotator-light-border;
+                color: $annotator-text-color;
+                .sub-list {
+                    display: block;
+                }
+            }
+
+            &.note-input {
+
+                padding: 10px;
+                &:hover {
+                    background: transparent;
+                }
+
+                form {
+                    margin: 0;
+                }
+
+                textarea, input[type="text"] {
+                    font-size: 12px;
+                    color: #ddd;
+                    border-width: 0;
+                    background: transparent;
+                    width: 160px;
+                    color: #333;
+                    outline: none;
+                    line-height: 20px;
+                    padding: 0 3px;
+                    border: 1px solid #999;
+                    max-width: 160px;
+                    margin-bottom: 5px;
+
+
+
+                    &:focus {
+                        border-color: $primary;
+                        box-shadow: 0 0 1px rgba($primary, 0.2);
+                    }
+                }
+
+                textarea {
+                    max-height: 100px;
+                }
+                #add-button {
+                    height: 22px;
+                    width: 80px;
+                    font-size: 12px;
+                    color: #fff;
+                    text-align: center;
+                    line-height: 18px;
+                    border-width: 0;
+                    background-color: #4d90fe;
+                    cursor: pointer;
+                    margin-top: 10px;
+                }
+            }
+
+
+            .sub-list {
+                display: none;
+                position: absolute;
+                top: 0;
+                right: -182px;
+            }
+
+
+
+            &.colors {
+                padding: 8px 10px;
+                &:hover {
+                    background: transparent;
+                }
+                .color {
+                    width: 20px;
+                    height: 20px;
+                    padding: 0;
+                    margin: 0;
+                    border-radius: 100%;
+                    display: inline-block;
+                    margin: 0 8px;
+                    margin-top: 5px;
+                    border: 2px solid $annotator-light-border;
+                    cursor: pointer;
+
+                    &.active {
+                        border-color: darken($annotator-dark-border, 30%);
+                        &:hover {
+                            border-color: darken($annotator-dark-border, 30%);
+                        }
+                    }
+
+                    &:hover {
+                        border-color: darken($annotator-dark-border, 10%);
+                    }
+
+                }
+            }
+        }
+    }
+}
+

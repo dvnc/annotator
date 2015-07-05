@@ -1,0 +1,34 @@
+.tag-list {
+    position: absolute;
+    left: 0px;
+    .tag {
+        display: block;
+        cursor: pointer;
+        font-size: 12px;
+        &:hover .tag-text, &.shown .tag-text {
+            opacity: 1;
+        }
+    }
+    .marker {
+        padding-right: 4px;
+        background: rgba(66, 133, 244, 1);
+        width: 0;
+        height: 28px;
+        display: inline-block;
+        float: left;
+        background-color: rgba(66, 133, 244, 1)
+    }
+    .tag-text {
+        color:#000;
+        height: 28px;
+        line-height: 28px;
+        padding:0 4px;
+        display: inline-block;
+        opacity: 0;
+        overflow: hidden;
+        background-color: rgba(66, 133, 244, 1);
+        transition: all 0.2s ease-out;
+
+    }
+
+}

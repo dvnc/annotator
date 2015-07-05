@@ -1,0 +1,25 @@
+{
+  "name": "annotator",
+  "version": "0.0.1",
+  "authors": [
+    "Bharani <bharani91@gmail.com>"
+  ],
+  "description": "Highlight and annotate selected text on a page",
+  "keywords": [
+    "selection",
+    "tagging",
+    "annotation"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.3"
+  }
+}

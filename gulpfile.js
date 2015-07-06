@@ -52,8 +52,8 @@ gulp.task('dist', function() {
     .pipe(sass()).on('error', errorHandler)
     .pipe(autoprefixer(['>5%', 'ie >= 9']))
     .pipe(gulp.dest('./dist'))
-});
 
+});
 
 
 // Sass
@@ -61,16 +61,16 @@ gulp.task('sass', function() {
     return gulp.src('./src/styles/**/*.scss')
     .pipe(sass()).on('error', errorHandler)
     .pipe(autoprefixer(['>5%', 'ie >= 9']))
-    .pipe(gulp.dest('./build/css'))
+    .pipe(gulp.dest('./example/css'))
     .pipe(connect.reload());
 });
 
 
 gulp.task('copy', function(){
   gulp.src(['./src/scripts/**/*.js'])
-    .pipe(gulp.dest('./build/scripts')).on('error', errorHandler);
+    .pipe(gulp.dest('./example/scripts')).on('error', errorHandler);
     gulp.src('./src/*.html')
-    .pipe(gulp.dest('./build'));
+    .pipe(gulp.dest('./example'));
 });
 
 
@@ -78,7 +78,7 @@ gulp.task('copy', function(){
 // Server
 gulp.task('webserver', function() {
     connect.server({
-        root: ['build', './bower_components'],
+        root: ['example', './bower_components'],
         livereload: true
     });
 });

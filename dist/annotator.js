@@ -423,10 +423,10 @@ var Editor = (function Editor() {
 
             $containerElement.append(this.$popoverElement);
 
-            if( !(window.fbAsyncInit) ) this.$popoverElement.find(".js-facebook-share").remove();
-
             // autocomplete
-            this._awesomplete = new Awesomplete(this.$popoverElement.find(".js-tags-field")[0]);
+            if(Awesomplete){
+                this._awesomplete = new Awesomplete(this.$popoverElement.find(".js-tags-field")[0]);
+            }
 
             this.events.forEach(function(eventMap) {
                 var editor = this;
@@ -452,14 +452,6 @@ var Editor = (function Editor() {
             });
 
             html += '</li>'
-                 // +  '<li class="tag-input">'
-                 // +       '<div class="tag-form-container">'
-                 // +            '<form class="tag-form js-tag-form">'
-                 // +                '<input id="search-text" name="tags" placeholder="Add a note..."  type="text" />'
-                 // +                '<button id="search-button" type="submit">Add</button>'
-                 // +             '</form>'
-                 // +       '</div>'
-                 // +  '</li>'
                  +  '<li class="note-input">'
                  +      '<form class="js-note-form">'
                  +          '<input type="text" class="js-tags-field" placeholder="#revision, #later">' 
@@ -502,11 +494,18 @@ var Editor = (function Editor() {
                 }
             }
 
+                   // FB Share
+            if( !(window.FB) ) this.$popoverElement.find(".js-facebook-share").hide();
+            else { this.$popoverElement.find(".js-facebook-share").show(); }
+
+
             if(temporary) {
                 this.annotation.render({ temporary: true });
             }
 
-            this._awesomplete.list = this.annotator.tags;
+            if(this._awesomplete) {
+                this._awesomplete.list = this.annotator.tags;
+            }
 
             $popover.removeClass("anim").css("top", top - 20).css("left", left).show();
             setTimeout(function() {

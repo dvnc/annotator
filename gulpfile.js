@@ -8,21 +8,55 @@ var sourcemaps      = require('gulp-sourcemaps');
 var concat = require('gulp-concat');
 var stripDebug = require('gulp-strip-debug');
 var uglify = require('gulp-uglify');
+var sass = require('gulp-sass');
+var cssmin  = require('gulp-cssmin');
+var rename  = require('gulp-rename');
+
+
  
-gulp.task('scriptsmin', function() {
-  gulp.src(['./src/scripts/*.js'])
+gulp.task('dist', function() {
+    gulp.src([
+        './src/scripts/annotation.js', 
+        './src/scripts/editor.js', 
+        './src/scripts/annotator.js'
+    ])
     .pipe(sourcemaps.init())
     .pipe(stripDebug())
     .pipe(uglify()).on('error', errorHandler)
-    .pipe(gulp.dest('./build/scripts/min'))
-    .pipe(connect.reload());
+    .pipe(concat("annotator.min.js"))
+    .pipe(gulp.dest("./dist"))
+
+    gulp.src([
+        './src/scripts/annotation.js', 
+        './src/scripts/editor.js', 
+        './src/scripts/annotator.js'
+    ])
+    .pipe(sourcemaps.init())
+    .pipe(stripDebug())
+    .pipe(concat("annotator.js"))
+    .pipe(gulp.dest("./dist"))
+
+
+    gulp.src([
+        './src/styles/annotator.scss'
+    ])
+    .pipe(sass()).on('error', errorHandler)
+    .pipe(autoprefixer(['>5%', 'ie >= 9']))
+    .pipe(cssmin())
+    .pipe(rename({suffix: '.min'}))
+    .pipe(gulp.dest('./dist'))
+
+    gulp.src([
+        './src/styles/annotator.scss'
+    ])
+    .pipe(sass()).on('error', errorHandler)
+    .pipe(autoprefixer(['>5%', 'ie >= 9']))
+    .pipe(gulp.dest('./dist'))
 });
 
 
 
-
 // Sass
-var sass = require('gulp-sass');
 gulp.task('sass', function() {
     return gulp.src('./src/styles/**/*.scss')
     .pipe(sass()).on('error', errorHandler)

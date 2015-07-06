@@ -195,7 +195,7 @@ var Editor = (function Editor() {
             var note = $form.find(".js-note-field").val();
             var tags = this.getTagsFromString($form.find(".js-tags-field").val());
 
-            this.saveAndClose({ color: color, note: note, tags });
+            this.saveAndClose({ color: color, note: note, tags: tags });
         },
 
         addNote: function(e) {
@@ -204,7 +204,7 @@ var Editor = (function Editor() {
             var tags = this.getTagsFromString($form.find(".js-tags-field").val());
             var color = this.annotation.color || this.annotator.defaultColor;
 
-            this.saveAndClose({ color: color, note: note, tags });
+            this.saveAndClose({ color: color, note: note, tags: tags });
         },
 
         saveAndClose: function(data) {

@@ -59,10 +59,10 @@ jQuery(document).ready(function($) {
         if(window.localStorage) {
             var annotations = JSON.parse(localStorage.getItem("annotations"));
 
-            // if( !annotations || annotations.length == 0 ) {
+            if( !annotations || annotations.length == 0 ) {
                 window.localStorage.setItem("annotations", JSON.stringify(defaultAnnotations));
                 return defaultAnnotations;
-            // }
+            }
 
             return annotations;
         } else {

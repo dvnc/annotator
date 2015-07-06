@@ -143,23 +143,22 @@ var Annotator = (function Annotator() {
             var self = this;
 
 
+            $element.on("click", ".annotation", function(e) {
+                e.stopPropagation();
+                self.handleAnnotationClick(e);
+            });
+
             $element.on("mouseup touchend", function(e) {
                 e.preventDefault();
                 var $target = $(e.target);
-                console.log("TARGET", $target);
 
                 if(self.editor.isVisible() && !$target.parents("#annotation-editor").length && !$target.hasClass("annotation")) {
                     // editor is open but clicked outside
                     self.editor.hideEditor()
                 }
 
-                if ($target.hasClass("annotation")) {
-                    // shown annotation clicked
-                    // set up editor again for editing annotation
-                    self.handleAnnotationClick(e);
-                } else {
-                    self.handleAnnotation(e);
-                }
+   
+                self.handleAnnotation(e);
             });
 
         },

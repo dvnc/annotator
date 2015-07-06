@@ -177,26 +177,26 @@ var Annotation = (function Annotation() {
         serialize: function() {
             var range = this.range;
             return {
-             range: {
-                startOffset: range.startOffset,
-                endOffset: range.endOffset,
-                startContainerXPath: range.startContainerXPath,
-                endContainerXPath: range.endContainerXPath,
-                parentContainerXPath: range.parentContainerXPath
-            },
-            id:  this.id,
-            selectedText: this.selectedText,
-            color: this.color,
-            note: this.note,
-            tags: this.tags
-        }
-    },
+                 range: {
+                    startOffset: range.startOffset,
+                    endOffset: range.endOffset,
+                    startContainerXPath: range.startContainerXPath,
+                    endContainerXPath: range.endContainerXPath,
+                    parentContainerXPath: range.parentContainerXPath
+                },
+                id:  this.id,
+                selectedText: this.selectedText,
+                color: this.color,
+                note: this.note,
+                tags: this.tags
+            }
+        },
 
-    getContainedNodes: function() {
-        var range, startContainer, endContainer, parentContainer, startOffset, endOffset;
-        var nodes = [];
+        getContainedNodes: function() {
+            var range, startContainer, endContainer, parentContainer, startOffset, endOffset;
+            var nodes = [];
 
-        if(this._selectedRange) {
+            if(this._selectedRange) {
                 range = this._selectedRange;
                 parentContainer = range.commonAncestorContainer;
                 startContainer = range.startContainer;
@@ -212,6 +212,7 @@ var Annotation = (function Annotation() {
             endOffset = range.endOffset;
 
 
+
             if(startContainer.nodeType == Node.ELEMENT_NODE) {
                 var startContainerParams = this.getTextNodeAtOffset(startContainer, startOffset);
                 startContainer = startContainerParams[0];
@@ -224,6 +225,7 @@ var Annotation = (function Annotation() {
                 endContainer = endContainerParams[0];
                 endOffset = endOffset - endContainerParams[1];
             }
+
 
             if(startContainer == endContainer) {
                 if(startContainer.nodeType != Node.ELEMENT_NODE) {
@@ -247,6 +249,7 @@ var Annotation = (function Annotation() {
                 }
 
                 var innerNodes = this.getNodesToWrap(parentContainer, startContainer.nextSibling, endContainer);
+
 
                 for(var i = 0; i < innerNodes.length; i++) {
                     nodes.push(innerNodes[i]);
@@ -272,7 +275,7 @@ var Annotation = (function Annotation() {
                         countUptoPrev = count - node.nodeValue.length;
                         found = true;
                     }
-                } else if (node.nodeType == Node.ELEMENT_NODE && !$(node).hasClass("tag")) {
+                } else if (node.nodeType == Node.ELEMENT_NODE) {
                     for (var i = 0, len = node.childNodes.length; i < len; ++i) {
                         getTextNodes(node.childNodes[i]);
                     }
@@ -290,10 +293,9 @@ var Annotation = (function Annotation() {
             function getTextNodes(node) {
                 if (node == startNode) {
                     pastStartNode = true;
-                    if (!reachedEndNode && !/^\s*$/.test(node.nodeValue)) {
-                        textNodes.push(node);
-                    }
-                } else if (node == endNode) {
+                } 
+
+                if (node == endNode) {
                     reachedEndNode = true;
                 } else if (node.nodeType == Node.TEXT_NODE) {
                     if (pastStartNode && !reachedEndNode && !/^\s*$/.test(node.nodeValue)) {

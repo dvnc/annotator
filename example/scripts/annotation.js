@@ -66,10 +66,6 @@ var Annotation = (function Annotation() {
         },
 
         saveSelection: function(range) {
-
-            console.log(range, range.direction);
-
-
             var parentContainer = range.commonAncestorContainer;
             var startContainer = range.startContainer;
             var endContainer = range.endContainer;
@@ -77,13 +73,14 @@ var Annotation = (function Annotation() {
             var startOffset = range.startOffset;
             var endOffset = range.endOffset;
 
-            // ignoring <span class='annotation'></span>
-            var parentNode = this.getParentNodeFor(parentContainer, true);
-            var startNode = this.getParentNodeFor(startContainer, true);
-            var endNode = this.getParentNodeFor(endContainer, true);
+            var parentNode = this.getParentNodeFor(parentContainer);
+            var startNode = this.getParentNodeFor(startContainer);
+            var endNode = this.getParentNodeFor(endContainer);
 
             var nodesBetweenStart = this.getNodesToWrap(parentNode, startNode.firstChild, startContainer);
             var nodesBetweenEnd = this.getNodesToWrap(parentNode, endNode.firstChild, endContainer);
+
+            console.log(startNode.firstChild, nodesBetweenStart);
 
             if(nodesBetweenStart.length) {
                 for(var i = 0; i < nodesBetweenStart.length; i++) {
@@ -130,16 +127,10 @@ var Annotation = (function Annotation() {
             return text;
         },
 
-        getParentNodeFor: function(node, skipAnnotationSpan) {
+        getParentNodeFor: function(node) {
 
             while(node.nodeType != 1) {
                 node = node.parentNode;
-            }
-
-            if(skipAnnotationSpan) {
-                while($(node).hasClass('annotation') || $(node).hasClass('tag-list')) {
-                    node = node.parentNode;
-                }
             }
 
             return node;
@@ -299,6 +290,9 @@ var Annotation = (function Annotation() {
             function getTextNodes(node) {
                 if (node == startNode) {
                     pastStartNode = true;
+                    if (!reachedEndNode && !/^\s*$/.test(node.nodeValue)) {
+                        textNodes.push(node);
+                    }
                 } else if (node == endNode) {
                     reachedEndNode = true;
                 } else if (node.nodeType == Node.TEXT_NODE) {

@@ -223,6 +223,9 @@ var Editor = (function Editor() {
                     // save tags to global list
                     this.annotator.addTags(annotation.tags);
 
+                    if(this.annotator.debug)
+                        this.saveToLocalStorage();
+
                     this.hideEditor();
                 }.bind(this)
             }
@@ -264,6 +267,7 @@ var Editor = (function Editor() {
             var annotation = this.annotation;
             var annotator = this.annotator;
 
+
             if(!annotation) return;
 
             var renderedAnnotation = $(this.annotator.containerElement)
@@ -274,6 +278,8 @@ var Editor = (function Editor() {
                 renderedAnnotation.contents().unwrap();
             });
 
+            if(this.annotator.debug)
+                this.saveToLocalStorage();
             this.hideEditor();
         },
 
@@ -318,10 +324,22 @@ var Editor = (function Editor() {
 
             this.hideEditor();
 
+        },
+
+        saveToLocalStorage: function() {
+            // save to localStorage
+            if(window.localStorage) {
+                var serializedAnnotations = this.annotator.annotations.map(function(annotation) {
+                    return annotation.serialize();
+                });
+
+                window.localStorage.setItem("annotations", JSON.stringify(serializedAnnotations));
+            }
         }
 
 
     }
+
 
     return Editor;
 })();

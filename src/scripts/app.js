@@ -10,7 +10,7 @@ jQuery(document).ready(function($) {
         "exam"
     ];
 
-    var annotations = [
+    var defaultAnnotations =  [
         {
             range: {
                 startOffset: 28,
@@ -54,6 +54,22 @@ jQuery(document).ready(function($) {
             color: "yellow"
         }
     ];
+
+    var annotations = (function() {
+        if(window.localStorage) {
+            var annotations = JSON.parse(localStorage.getItem("annotations"));
+
+            if( !annotations || annotations.length == 0 ) {
+                window.localStorage.setItem("annotation", JSON.stringify(defaultAnnotations));
+                return defaultAnnotations;
+            }
+
+            return annotations;
+        } else {
+            
+            return annotations;
+        }
+    })();
 
     var colors = [
         {

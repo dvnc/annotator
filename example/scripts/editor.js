@@ -262,13 +262,15 @@ var Editor = (function Editor() {
 
         removeAnnotation: function() {
             var annotation = this.annotation;
+            var annotator = this.annotator;
+
             if(!annotation) return;
 
             var renderedAnnotation = $(this.annotator.containerElement)
                                         .find(".annotation[data-id='" + annotation.id + "']");
 
             this.annotation.destroy(function() {
-                this.annotator.removeAnnotation(annotation.id);
+                annotator.removeAnnotation(annotation.id);
                 renderedAnnotation.contents().unwrap();
             });
 

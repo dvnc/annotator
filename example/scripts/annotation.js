@@ -66,6 +66,10 @@ var Annotation = (function Annotation() {
         },
 
         saveSelection: function(range) {
+
+            console.log(range, range.direction);
+
+
             var parentContainer = range.commonAncestorContainer;
             var startContainer = range.startContainer;
             var endContainer = range.endContainer;

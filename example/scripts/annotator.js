@@ -43,6 +43,11 @@ var Annotator = (function Annotator() {
             if(opts.annotations) {
                 this.renderExistingAnnotations(opts.annotations);
             }
+
+            // Setup editor
+            var editor = Object.create(Editor);
+            editor.init({ annotator: this });
+            this.setEditor(editor);
         },
 
         addTags: function(tags) {

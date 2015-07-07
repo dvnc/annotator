@@ -96,11 +96,6 @@ jQuery(document).ready(function($) {
         existingTags: tags,
         colors: colors
     });
-
-    var editor = Object.create(Editor);
-    editor.init({ annotator: annotator });
-
-    annotator.setEditor(editor);
     annotator.startListening();
 
 });

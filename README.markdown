@@ -1,7 +1,10 @@
 # Annotator
-Popover that lets you highlight, add notes and tags to any selected text on a page
+
+Popover that lets you highlight, share, add notes and tags to any selected text on a page
 
 *Requires jQuery to be loaded on the page. Autocompletion (for tags) requires awesomplete.js*
+
+##### [Demo](http://bharani91.github.io/annotator)
 
 
 ![Annotator Screenshot](./annotator-screenshot.png)
@@ -16,14 +19,15 @@ Popover that lets you highlight, add notes and tags to any selected text on a pa
         annotations: annotations, // Serialized annotations
         existingTags: tags, // Array of tags
     });
-
-    var editor = Object.create(Editor);
-    editor.init({ annotator: annotator });
-
-    annotator.setEditor(editor);
     annotator.startListening();
 
 ```
+
+---------------
+
+##### TODO
+- AJAX call to save annotation to server
+- Write tests
 
 ---------------
 

@@ -46,4 +46,4 @@ Visit http://localhost:8080/
 
 
 ---------------
-**bharanim / [@bharani91](https://twitter.com/bharani91)**
+**bharanim / dvnc**

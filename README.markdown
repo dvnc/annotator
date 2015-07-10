@@ -4,7 +4,7 @@ Popover that lets you highlight, share, add notes and tags to any selected text 
 
 *Requires jQuery to be loaded on the page. Autocompletion (for tags) requires awesomplete.js*
 
-##### [Demo](http://bharani91.github.io/annotator)
+##### [Demo](http://dvnc.github.io/annotator)
 
 
 ![Annotator Screenshot](./annotator-screenshot.png)

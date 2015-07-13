@@ -73,13 +73,14 @@ var Annotation = (function Annotation() {
             var startOffset = range.startOffset;
             var endOffset = range.endOffset;
 
-            // ignoring <span class='annotation'></span>
-            var parentNode = this.getParentNodeFor(parentContainer, true);
-            var startNode = this.getParentNodeFor(startContainer, true);
-            var endNode = this.getParentNodeFor(endContainer, true);
+            var parentNode = this.getParentNodeFor(parentContainer);
+            var startNode = this.getParentNodeFor(startContainer);
+            var endNode = this.getParentNodeFor(endContainer);
 
             var nodesBetweenStart = this.getNodesToWrap(parentNode, startNode.firstChild, startContainer);
             var nodesBetweenEnd = this.getNodesToWrap(parentNode, endNode.firstChild, endContainer);
+
+            void 0;
 
             if(nodesBetweenStart.length) {
                 for(var i = 0; i < nodesBetweenStart.length; i++) {
@@ -126,16 +127,10 @@ var Annotation = (function Annotation() {
             return text;
         },
 
-        getParentNodeFor: function(node, skipAnnotationSpan) {
+        getParentNodeFor: function(node) {
 
             while(node.nodeType != 1) {
                 node = node.parentNode;
-            }
-
-            if(skipAnnotationSpan) {
-                while($(node).hasClass('annotation') || $(node).hasClass('tag-list')) {
-                    node = node.parentNode;
-                }
             }
 
             return node;
@@ -182,26 +177,26 @@ var Annotation = (function Annotation() {
         serialize: function() {
             var range = this.range;
             return {
-             range: {
-                startOffset: range.startOffset,
-                endOffset: range.endOffset,
-                startContainerXPath: range.startContainerXPath,
-                endContainerXPath: range.endContainerXPath,
-                parentContainerXPath: range.parentContainerXPath
-            },
-            id:  this.id,
-            selectedText: this.selectedText,
-            color: this.color,
-            note: this.note,
-            tags: this.tags
-        }
-    },
+                 range: {
+                    startOffset: range.startOffset,
+                    endOffset: range.endOffset,
+                    startContainerXPath: range.startContainerXPath,
+                    endContainerXPath: range.endContainerXPath,
+                    parentContainerXPath: range.parentContainerXPath
+                },
+                id:  this.id,
+                selectedText: this.selectedText,
+                color: this.color,
+                note: this.note,
+                tags: this.tags
+            }
+        },
 
-    getContainedNodes: function() {
-        var range, startContainer, endContainer, parentContainer, startOffset, endOffset;
-        var nodes = [];
+        getContainedNodes: function() {
+            var range, startContainer, endContainer, parentContainer, startOffset, endOffset;
+            var nodes = [];
 
-        if(this._selectedRange) {
+            if(this._selectedRange) {
                 range = this._selectedRange;
                 parentContainer = range.commonAncestorContainer;
                 startContainer = range.startContainer;
@@ -217,6 +212,7 @@ var Annotation = (function Annotation() {
             endOffset = range.endOffset;
 
 
+
             if(startContainer.nodeType == Node.ELEMENT_NODE) {
                 var startContainerParams = this.getTextNodeAtOffset(startContainer, startOffset);
                 startContainer = startContainerParams[0];
@@ -229,6 +225,7 @@ var Annotation = (function Annotation() {
                 endContainer = endContainerParams[0];
                 endOffset = endOffset - endContainerParams[1];
             }
+
 
             if(startContainer == endContainer) {
                 if(startContainer.nodeType != Node.ELEMENT_NODE) {
@@ -252,6 +249,7 @@ var Annotation = (function Annotation() {
                 }
 
                 var innerNodes = this.getNodesToWrap(parentContainer, startContainer.nextSibling, endContainer);
+
 
                 for(var i = 0; i < innerNodes.length; i++) {
                     nodes.push(innerNodes[i]);
@@ -277,7 +275,7 @@ var Annotation = (function Annotation() {
                         countUptoPrev = count - node.nodeValue.length;
                         found = true;
                     }
-                } else if (node.nodeType == Node.ELEMENT_NODE && !$(node).hasClass("tag")) {
+                } else if (node.nodeType == Node.ELEMENT_NODE) {
                     for (var i = 0, len = node.childNodes.length; i < len; ++i) {
                         getTextNodes(node.childNodes[i]);
                     }
@@ -295,7 +293,9 @@ var Annotation = (function Annotation() {
             function getTextNodes(node) {
                 if (node == startNode) {
                     pastStartNode = true;
-                } else if (node == endNode) {
+                } 
+
+                if (node == endNode) {
                     reachedEndNode = true;
                 } else if (node.nodeType == Node.TEXT_NODE) {
                     if (pastStartNode && !reachedEndNode && !/^\s*$/.test(node.nodeValue)) {
@@ -605,6 +605,9 @@ var Editor = (function Editor() {
                     // save tags to global list
                     this.annotator.addTags(annotation.tags);
 
+                    if(this.annotator.debug)
+                        this.saveToLocalStorage();
+
                     this.hideEditor();
                 }.bind(this)
             }
@@ -644,16 +647,21 @@ var Editor = (function Editor() {
 
         removeAnnotation: function() {
             var annotation = this.annotation;
+            var annotator = this.annotator;
+
+
             if(!annotation) return;
 
             var renderedAnnotation = $(this.annotator.containerElement)
                                         .find(".annotation[data-id='" + annotation.id + "']");
 
             this.annotation.destroy(function() {
-                this.annotator.removeAnnotation(annotation.id);
+                annotator.removeAnnotation(annotation.id);
                 renderedAnnotation.contents().unwrap();
             });
 
+            if(this.annotator.debug)
+                this.saveToLocalStorage();
             this.hideEditor();
         },
 
@@ -698,10 +706,22 @@ var Editor = (function Editor() {
 
             this.hideEditor();
 
+        },
+
+        saveToLocalStorage: function() {
+            // save to localStorage
+            if(window.localStorage) {
+                var serializedAnnotations = this.annotator.annotations.map(function(annotation) {
+                    return annotation.serialize();
+                });
+
+                window.localStorage.setItem("annotations", JSON.stringify(serializedAnnotations));
+            }
         }
 
 
     }
+
 
     return Editor;
 })();
@@ -750,6 +770,11 @@ var Annotator = (function Annotator() {
             if(opts.annotations) {
                 this.renderExistingAnnotations(opts.annotations);
             }
+
+            // Setup editor
+            var editor = Object.create(Editor);
+            editor.init({ annotator: this });
+            this.setEditor(editor);
         },
 
         addTags: function(tags) {
@@ -850,23 +875,22 @@ var Annotator = (function Annotator() {
             var self = this;
 
 
+            $element.on("click", ".annotation", function(e) {
+                e.stopPropagation();
+                self.handleAnnotationClick(e);
+            });
+
             $element.on("mouseup touchend", function(e) {
                 e.preventDefault();
                 var $target = $(e.target);
-                void 0;
 
                 if(self.editor.isVisible() && !$target.parents("#annotation-editor").length && !$target.hasClass("annotation")) {
                     // editor is open but clicked outside
                     self.editor.hideEditor()
                 }
 
-                if ($target.hasClass("annotation")) {
-                    // shown annotation clicked
-                    // set up editor again for editing annotation
-                    self.handleAnnotationClick(e);
-                } else {
-                    self.handleAnnotation(e);
-                }
+   
+                self.handleAnnotation(e);
             });
 
         },

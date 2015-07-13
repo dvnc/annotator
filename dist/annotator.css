@@ -9,14 +9,23 @@
   .annotation.shown {
     cursor: pointer; }
 
-.annotation.yellow, #annotation-editor .colors .color.yellow {
+#annotation-editor .colors .color.yellow {
   background: #FFE79D; }
-.annotation.green, #annotation-editor .colors .color.green {
+#annotation-editor .colors .color.green {
   background: #BCEFAA; }
-.annotation.pink, #annotation-editor .colors .color.pink {
+#annotation-editor .colors .color.pink {
   background: #FD99BB; }
-.annotation.blue, #annotation-editor .colors .color.blue {
+#annotation-editor .colors .color.blue {
   background: #A4D7FC; }
+
+.annotation.yellow {
+  background: rgba(255, 231, 157, 0.7); }
+.annotation.green {
+  background: rgba(188, 239, 170, 0.7); }
+.annotation.pink {
+  background: rgba(253, 153, 187, 0.7); }
+.annotation.blue {
+  background: rgba(164, 215, 252, 0.7); }
 
 .temporary {
   background: #babaff; }

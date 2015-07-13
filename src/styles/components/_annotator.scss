@@ -11,7 +11,7 @@
 }
 
 // Color definitions
-.annotation, #annotation-editor .colors .color {
+#annotation-editor .colors .color {
     &.yellow {
         background: $yellow;
     }
@@ -26,6 +26,24 @@
 
     &.blue {
         background: $blue;
+    }
+}
+
+.annotation {
+    &.yellow {
+        background: rgba($yellow, 0.7);
+    }
+
+    &.green {
+        background: rgba($green, 0.7);
+    }
+
+    &.pink {
+        background: rgba($pink, 0.7);
+    }
+
+    &.blue {
+        background: rgba($blue, 0.7);
     }
 }
 

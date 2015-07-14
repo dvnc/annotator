@@ -6,7 +6,7 @@ Popover that lets you highlight, share, add notes and tags to any selected text 
 
 ##### [Demo](http://dvnc.github.io/annotator)
 
-
+![Annotator Screenshot](./annotator-screenshot.png?raw=true)
 
 ##### Getting started
 

@@ -35,7 +35,6 @@ jQuery(document).ready(function($) {
                 endContainerXPath: "id(\"book\")/p[7]",
                 parentContainerXPath: "id(\"book\")/p[7]"
             },
-            id: "annotation-1435824292077",
             selectedText: "increased chances of natural calamities such as floods and droughts. Recall that plants need carbon dioxide for photosynthesis. Fewer trees would mean that less carbon dioxide will be used up resulting in its increased amount in the atmosphere. This will lead to global warming as carbon dioxide traps the heat rays reflected by the earth",
             color: "green",
             note: "This is another note"
@@ -63,11 +62,9 @@ jQuery(document).ready(function($) {
                 window.localStorage.setItem("annotations", JSON.stringify(defaultAnnotations));
                 return defaultAnnotations;
             }
-
             return annotations;
         } else {
-            
-            return annotations;
+            return [];
         }
     })();
 

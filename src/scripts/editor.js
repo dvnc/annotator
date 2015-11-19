@@ -100,7 +100,7 @@ var Editor = (function Editor() {
             temporary = opts.temporary;
 
             var top = position.top - 30;
-            var left = position.left - 90;
+            var left = position.left - this.$popoverElement.width()/2;
 
             if(annotation) {
                 this.annotation = annotation;
@@ -112,7 +112,7 @@ var Editor = (function Editor() {
                 }
             }
 
-                   // FB Share
+            // FB Share
             if( !(window.FB) ) this.$popoverElement.find(".js-facebook-share").hide();
             else { this.$popoverElement.find(".js-facebook-share").show(); }
 
@@ -125,11 +125,8 @@ var Editor = (function Editor() {
                 this._awesomplete.list = this.annotator.tags;
             }
 
-            $popover.removeClass("anim").css("top", top - 20).css("left", left).show();
-            setTimeout(function() {
-                $popover.addClass("anim").css("top", top );
-                $popover.find("#annotation-input").focus();
-            }, 0);
+            $popover.removeClass("anim").css("top", top).css("left", left).show();
+            $popover.find("#annotation-input").focus();
         },
 
         isVisible: function() {

@@ -2,9 +2,6 @@ var Annotation = (function Annotation() {
 
     var Annotation = {
         annotator: null,
-        // Range that we got from the current selection
-        _selectedRange: null,
-
         range: {
             startContainerXPath: null,
             endContainerXPath: null,
@@ -28,6 +25,7 @@ var Annotation = (function Annotation() {
                 this.saveSelection(obj.selectedRange);
             } else if(obj.savedAnnotation) {
                 var savedAnnotation = obj.savedAnnotation;
+
                 this.range          = savedAnnotation.range;
                 this.id             = savedAnnotation.id;
                 this.selectedText   = savedAnnotation.selectedText;
@@ -35,6 +33,15 @@ var Annotation = (function Annotation() {
                 this.note           = savedAnnotation.note;
                 this.tags           = savedAnnotation.tags;
             }
+
+            this.setRangeElements();
+
+        },
+
+        setRangeElements: function() {
+            this.$parentContainer = $(this.annotator.findElementByXPath(this.range.parentContainerXPath));
+            this.$startContainer = $(this.annotator.findElementByXPath(this.range.startContainerXPath));
+            this.$endContainer = $(this.annotator.findElementByXPath(this.range.endContainerXPath));
 
         },
 
@@ -48,10 +55,18 @@ var Annotation = (function Annotation() {
             } else {
                 this.wrapNodes();
             }
+
+            // remove existing selection
+            // we don't need it anymore
+            if (window.getSelection) {
+                window.getSelection().removeAllRanges();
+            } else if (document.selection) {
+                document.selection.empty();
+            }
         },
 
         updateAnnotation: function() {
-            var $parentContainer = $(this.annotator.findElementByXPath(this.range.parentContainerXPath));
+            var $parentContainer = this.$parentContainer;
  
             var renderedAnnotation = $parentContainer
                                         .find(".annotation[data-id='" + this.id + "']");
@@ -80,13 +95,10 @@ var Annotation = (function Annotation() {
             var nodesBetweenStart = this.getNodesToWrap(parentNode, startNode.firstChild, startContainer);
             var nodesBetweenEnd = this.getNodesToWrap(parentNode, endNode.firstChild, endContainer);
 
-            console.log(startNode.firstChild, nodesBetweenStart);
-
             if(nodesBetweenStart.length) {
                 for(var i = 0; i < nodesBetweenStart.length; i++) {
                     var characterLength = nodesBetweenStart[i].nodeValue.length;
                     startOffset += characterLength;
-                    // endOffset += characterLength;
                 }
             }
 
@@ -98,16 +110,6 @@ var Annotation = (function Annotation() {
 
             var selectedContent = this.getSelectionContent(range);
 
-
-            // clone this for easily wrapping children
-            // without having to go through the full circle of
-            // looking up by xpath
-            this._selectedRange = range.cloneRange();
-
-
-            // store range properties because
-            // we need it when we save this annotation
-            // to server
             this.range = {
                 startContainerXPath: this.annotator.createXPathFromElement(startNode),
                 endContainerXPath: this.annotator.createXPathFromElement(endNode),
@@ -129,7 +131,7 @@ var Annotation = (function Annotation() {
 
         getParentNodeFor: function(node) {
 
-            while(node.nodeType != 1) {
+            while(node.nodeType != 1 || (node.nodeType == 1 && node.classList.contains("js-no-select")) ) {
                 node = node.parentNode;
             }
 
@@ -164,13 +166,13 @@ var Annotation = (function Annotation() {
 
         },
 
+        // TODO
         destroy: function(cbk) {
-            console.log("Destroying", this.id);
             if(cbk) cbk();
         },
 
+        // TODO
         postToRemote: function() {
-            // TODO
             console.log("AJAX");
         },
 
@@ -193,67 +195,40 @@ var Annotation = (function Annotation() {
         },
 
         getContainedNodes: function() {
-            var range, startContainer, endContainer, parentContainer, startOffset, endOffset;
+            var range, startContainer, endContainer, parentContainer;
             var nodes = [];
 
-            if(this._selectedRange) {
-                range = this._selectedRange;
-                parentContainer = range.commonAncestorContainer;
-                startContainer = range.startContainer;
-                endContainer = range.endContainer
+            range = this.range;
+            
+            parentContainer = this.$parentContainer.get(0);
+            startContainer = this.$startContainer.get(0);
+            endContainer = this.$endContainer.get(0);
+
+            var startTextNodeParams = this.getTextNodeAtOffset(startContainer, range.startOffset);
+                endTextNodeParams = this.getTextNodeAtOffset(endContainer, range.endOffset);
+
+            var startTextNode = startTextNodeParams[0],
+                startOffset = startTextNodeParams[1],
+                endTextNode = endTextNodeParams[0],
+                endOffset = endTextNodeParams[1];
+
+            console.log(startTextNode, endTextNode)
+
+
+            if(startTextNode == endTextNode) {
+                var startTextNodeSplit = startTextNode.splitText(startOffset);
+                var endTextNodeSplit = startTextNodeSplit.splitText(endOffset - startOffset);    
             } else {
-                range = this.range;
-                range.parentContainer = parentContainer = this.annotator.findElementByXPath(range.parentContainerXPath);
-                range.startContainer = startContainer = this.annotator.findElementByXPath(range.startContainerXPath);
-                range.endContainer = endContainer = this.annotator.findElementByXPath(range.endContainerXPath);
-            }
-
-            startOffset = range.startOffset;
-            endOffset = range.endOffset;
-
-
-
-            if(startContainer.nodeType == Node.ELEMENT_NODE) {
-                var startContainerParams = this.getTextNodeAtOffset(startContainer, startOffset);
-                startContainer = startContainerParams[0];
-                startOffset = startOffset - startContainerParams[1];
+                var startTextNodeSplit = startTextNode.splitText(startOffset);
+                var endTextNodeSplit = endTextNode.splitText(endOffset);    
             }
 
 
-            if(endContainer.nodeType == Node.ELEMENT_NODE) {
-                var endContainerParams = this.getTextNodeAtOffset(endContainer, endOffset);
-                endContainer = endContainerParams[0];
-                endOffset = endOffset - endContainerParams[1];
-            }
+            var innerNodes = this.getNodesToWrap(parentContainer, startTextNodeSplit, endTextNodeSplit);
 
 
-            if(startContainer == endContainer) {
-                if(startContainer.nodeType != Node.ELEMENT_NODE) {
-                    var startTextNode = startContainer.splitText(startOffset);
-                    endContainer = startTextNode;
-                    endOffset = endOffset - startOffset;
-
-                    var endTextNode = endContainer.splitText(endOffset);
-                    nodes.push(endContainer);
-                }
-
-            } else {
-                if(startContainer.nodeType != Node.ELEMENT_NODE) {
-                    var startTextNode = startContainer.splitText(startOffset);
-                    nodes.push(startTextNode);
-                }
-
-                if(endContainer.nodeType != Node.ELEMENT_NODE) {
-                    var endTextNode = endContainer.splitText(endOffset);
-                    nodes.push(endContainer);
-                }
-
-                var innerNodes = this.getNodesToWrap(parentContainer, startContainer.nextSibling, endContainer);
-
-
-                for(var i = 0; i < innerNodes.length; i++) {
-                    nodes.push(innerNodes[i]);
-                }
+            for(var i = 0; i < innerNodes.length; i++) {
+                nodes.push(innerNodes[i]);
             }
 
             return nodes;
@@ -263,19 +238,19 @@ var Annotation = (function Annotation() {
         getTextNodeAtOffset: function(rootNode, offset) {
             var textNode,
             count = 0,
-            found = false,
-            countUptoPrev = 0;
+            found = false;
 
             function getTextNodes(node) {
                 if (node.nodeType == Node.TEXT_NODE && !/^\s*$/.test(node.nodeValue)) {
-                    count += node.nodeValue.length;
-
-                    if (count >= offset && found != true) {
-                        textNode = node;
-                        countUptoPrev = count - node.nodeValue.length;
-                        found = true;
+                    if ( found != true) {
+                        if(count+node.nodeValue.length >= offset) {
+                            textNode = node;
+                            found = true;    
+                        } else {
+                            count += node.nodeValue.length
+                        }
                     }
-                } else if (node.nodeType == Node.ELEMENT_NODE) {
+                } else if (node.nodeType == Node.ELEMENT_NODE ) {
                     for (var i = 0, len = node.childNodes.length; i < len; ++i) {
                         getTextNodes(node.childNodes[i]);
                     }
@@ -283,7 +258,7 @@ var Annotation = (function Annotation() {
             }
 
             getTextNodes(rootNode);
-            return [textNode, countUptoPrev];
+            return [textNode, (count == 0 ? offset : offset - count)];
 
         },
 
@@ -291,17 +266,18 @@ var Annotation = (function Annotation() {
             var pastStartNode = false, reachedEndNode = false, textNodes = [];
 
             function getTextNodes(node) {
+
                 if (node == startNode) {
                     pastStartNode = true;
                 } 
-
                 if (node == endNode) {
                     reachedEndNode = true;
                 } else if (node.nodeType == Node.TEXT_NODE) {
                     if (pastStartNode && !reachedEndNode && !/^\s*$/.test(node.nodeValue)) {
                         textNodes.push(node);
                     }
-                } else {
+                } else if (node.nodeType == Node.ELEMENT_NODE ) {
+                    
                     for (var i = 0, len = node.childNodes.length; !reachedEndNode && i < len; ++i) {
                         getTextNodes(node.childNodes[i]);
                     }
@@ -339,16 +315,7 @@ var Annotation = (function Annotation() {
         },
 
         removeTemporary: function() {
-            var range, parentContainer;
-            if(this._selectedRange) {
-                range = this._selectedRange;
-                parentContainer = range.commonAncestorContainer;
-            } else {
-                range = this.range;
-                range.parentContainer = parentContainer = this.annotator.findElementByXPath(range.parentContainerXPath);
-            }
-
-            var temporary = $(parentContainer).find(".temporary")
+            var temporary = this.$parentContainer.find(".temporary");
 
             for(var i = 0; i < temporary.length; i++) {
                 var elem = temporary[i];
@@ -357,16 +324,7 @@ var Annotation = (function Annotation() {
         },
 
         convertFromTemporary: function() {
-            var range, parentContainer;
-            if(this._selectedRange) {
-                range = this._selectedRange;
-                parentContainer = range.commonAncestorContainer;
-            } else {
-                range = this.range;
-                range.parentContainer = parentContainer = this.annotator.findElementByXPath(range.parentContainerXPath);
-            }
-
-            var temporary = $(parentContainer).find(".temporary")
+            var temporary = this.$parentContainer.find(".temporary");
 
             temporary
             .removeClass("temporary")

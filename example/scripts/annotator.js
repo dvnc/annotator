@@ -89,12 +89,8 @@ var Annotator = (function Annotator() {
 
         handleAnnotationClick: function(e) {
             var $target = $(e.target);
-            // if(!$target.hasClass("shown")) $target = $target.parents(".annotation.shown");
             var annotationID = $target.data("id");
             var annotation = this.findAnnotation(annotationID);
-
-            console.log("ANNOTATION", annotationID);
-            window.ann = annotation
 
             if(!annotation) return;
 
@@ -124,21 +120,18 @@ var Annotator = (function Annotator() {
                 var annotation = Object.create(Annotation);
                 annotation.init({ selectedRange: range, annotator: this });
 
-
                 var position = {
                     top: e.pageY,
                     left: e.pageX
                 };
 
-                console.log(position);
-
                 this.editor.showEditor({
+                    temporary: true,
                     position: {
                         top: e.pageY,
                         left: e.pageX
                     },
-                    annotation: annotation,
-                    temporary: true
+                    annotation: annotation
                 });
             }
         },
@@ -148,13 +141,10 @@ var Annotator = (function Annotator() {
             var self = this;
 
 
-            $element.on("click", ".annotation", function(e) {
-                e.stopPropagation();
-                self.handleAnnotationClick(e);
-            });
-
             $element.on("mouseup touchend", function(e) {
                 e.preventDefault();
+                e.stopPropagation();
+
                 var $target = $(e.target);
 
                 if(self.editor.isVisible() && !$target.parents("#annotation-editor").length && !$target.hasClass("annotation")) {
@@ -163,21 +153,28 @@ var Annotator = (function Annotator() {
                 }
 
    
-                self.handleAnnotation(e);
+                if(!$target.parents(".js-no-select").length) {
+                    self.handleAnnotation(e);
+                }
+            });
+
+            $element.on("click", ".annotation", function(e) {
+                e.stopPropagation();
+                self.handleAnnotationClick(e);
             });
 
         },
 
         findElementByXPath: function(path) {
             var evaluator = new XPathEvaluator(); 
-            var result = evaluator.evaluate(path, document.documentElement, null,XPathResult.FIRST_ORDERED_NODE_TYPE, null); 
+            var result = evaluator.evaluate(path, document.querySelector(this.containerElement), null,XPathResult.FIRST_ORDERED_NODE_TYPE, null); 
             return  result.singleNodeValue; 
         },
 
         createXPathFromElement: function(elm) {
             var allNodes = document.getElementsByTagName('*'); 
 
-            for (var segs = []; elm && elm.nodeType == 1; elm = elm.parentNode) { 
+            for (var segs = []; elm && elm.nodeType == 1 && elm != document.querySelector(this.containerElement).parentNode; elm = elm.parentNode) { 
                 if (elm.hasAttribute('id')) { 
                     var uniqueIdCount = 0; 
                     for (var n=0;n < allNodes.length;n++) { 
@@ -202,7 +199,7 @@ var Annotator = (function Annotator() {
                 }; 
             } 
 
-            return segs.length ? '/' + segs.join('/') : null; 
+            return segs.length ? '' + segs.join('/') : null; 
         }
 
     };

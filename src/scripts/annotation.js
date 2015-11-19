@@ -212,8 +212,6 @@ var Annotation = (function Annotation() {
                 endTextNode = endTextNodeParams[0],
                 endOffset = endTextNodeParams[1];
 
-            console.log(startTextNode, endTextNode)
-
 
             if(startTextNode == endTextNode) {
                 var startTextNodeSplit = startTextNode.splitText(startOffset);

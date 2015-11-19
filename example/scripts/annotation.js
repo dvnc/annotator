@@ -212,6 +212,7 @@ var Annotation = (function Annotation() {
                 endTextNode = endTextNodeParams[0],
                 endOffset = endTextNodeParams[1];
 
+
             if(startTextNode == endTextNode) {
                 var startTextNodeSplit = startTextNode.splitText(startOffset);
                 var endTextNodeSplit = startTextNodeSplit.splitText(endOffset - startOffset);    
@@ -219,6 +220,7 @@ var Annotation = (function Annotation() {
                 var startTextNodeSplit = startTextNode.splitText(startOffset);
                 var endTextNodeSplit = endTextNode.splitText(endOffset);    
             }
+
 
             var innerNodes = this.getNodesToWrap(parentContainer, startTextNodeSplit, endTextNodeSplit);
 

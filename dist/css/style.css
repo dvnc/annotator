@@ -1,0 +1,113 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline; }
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+  display: block; }
+
+body {
+  line-height: 1; }
+
+ol, ul {
+  list-style: none; }
+
+blockquote, q {
+  quotes: none; }
+
+blockquote:before, blockquote:after, q:before, q:after {
+  content: '';
+  content: none; }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0; }
+
+/*=====================================
+=            CUSTOM STYLES            =
+=====================================*/
+body {
+  background: #f1f1f1;
+  font: 16px/1.5 Helvetica, Arial, sans-serif; }
+
+.container {
+  overflow: hidden;
+  width: 100%;
+  max-width: 1140px;
+  margin: 0 auto; }
+
+h1, h2, h3, h4, h5, h6, strong {
+  font-weight: 700; }
+
+h1 {
+  font-size: 36px; }
+
+h2 {
+  font-size: 28px; }
+
+h3 {
+  font-size: 22px; }
+
+h4 {
+  font-size: 18px; }
+
+h5 {
+  font-size: 16px; }
+
+h6 {
+  font-size: 14px; }
+
+h1, h2, h3, h4, h5, h6, p {
+  margin: 10px 0; }
+
+ul, ol {
+  margin-left: 20px; }
+
+ul {
+  list-style: disc; }
+
+.content {
+  margin: 20px auto;
+  background: #FFFFFF;
+  border: 1px solid #e6e6e6; }
+  .content #book {
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative; }
+  .content .header {
+    background: #607D8B;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.24);
+    color: #ffffff;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.12); }
+    .content .header h1 {
+      margin: 0;
+      padding: 0; }
+    .content .header p {
+      margin: 0;
+      padding: 0;
+      color: #b7c6cd; }
+
+footer.main {
+  text-align: center;
+  margin: 20px auto; }
+  footer.main a {
+    color: #607D8B;
+    text-decoration: none;
+    text-shadow: 0 0 3px transparent;
+    -webkit-transition: color 0.2s ease-in, text-shadow 0.2s ease-in;
+            transition: color 0.2s ease-in, text-shadow 0.2s ease-in; }
+    footer.main a:hover {
+      color: #4d90fe;
+      text-shadow: 0 0 3px rgba(77, 144, 254, 0.2); }
+
+/*=====  End of CUSTOM STYLES  ======*/
